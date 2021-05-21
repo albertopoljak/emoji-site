@@ -1,10 +1,11 @@
+from PIL import Image
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user: User = models.OneToOneField(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.user.username
@@ -52,8 +53,8 @@ class Emoji(models.Model):
     date_uploaded = models.DateField(auto_now_add=True)
     uploaded_by = models.ForeignKey(UserProfile, null=True, on_delete=models.SET_NULL, related_name="uploaded_emojis")
 
-    favored_by = models.ManyToManyField(UserProfile, null=True, blank=True, related_name="favourites")
-    bookmarked_by = models.ManyToManyField(UserProfile, null=True, blank=True, related_name="bookmarks")
+    favored_by = models.ManyToManyField(UserProfile, blank=True, related_name="favourites")
+    bookmarked_by = models.ManyToManyField(UserProfile, blank=True, related_name="bookmarks")
 
     license = models.ForeignKey(EmojiLicense, on_delete=models.RESTRICT)
     source = models.URLField(default="", blank=True)
@@ -63,10 +64,14 @@ class Emoji(models.Model):
     sub_category = models.ForeignKey(Subcategory, on_delete=models.RESTRICT, related_name="emojis")
 
     downloads = models.IntegerField(default=0, validators=[MinValueValidator(0)])
-    image = models.ImageField()
+    image = models.ImageField(upload_to="images/")
 
     def __str__(self):
         return self.image.name
+
+    @property
+    def animated(self) -> bool:
+        return Image.open(self.image.url).is_animated
 
     @property
     def favorites_count(self) -> int:
@@ -74,7 +79,7 @@ class Emoji(models.Model):
 
     @property
     def bookmark_count(self) -> int:
-        return self.bookmarked_by.count()
+        return self.bookmarked_by.all().count()
 
 
 class RecommendedName(models.Model):
@@ -82,7 +87,6 @@ class RecommendedName(models.Model):
     weight = models.SmallIntegerField(validators=[MinValueValidator(0)])
     name = models.SlugField(
         max_length=32,
-        unique=True,
         help_text="Recommend name for this emoji."
     )
 
