@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="Detail">
+        <p> {{ emoji.image.url }} </p>
+        <p> Likes: {{ emoji.total_likes }} </p>
+        <input type="button" id="like" name="test" value="Like" />
+    </div>
+{% endblock %}

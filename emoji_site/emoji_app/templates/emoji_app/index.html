@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+
+    {% if all_emoji %}
+        <ul>
+        {% for emoji in all_emoji %}
+            <li>
+                <a href ="{% url 'emoji_app:detail' emoji.id %}">{{ emoji.image.url }}</a>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No emojis available.</p>
+    {% endif %}
+
+{% endblock %}
