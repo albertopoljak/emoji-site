@@ -55,7 +55,7 @@ class Emoji(models.Model):
     date_uploaded = models.DateField(auto_now_add=True)
     uploaded_by = models.ForeignKey(UserProfile, null=True, on_delete=models.SET_NULL, related_name="uploaded_emojis")
 
-    favored_by = models.ManyToManyField(UserProfile, blank=True, related_name="favourites")
+    liked_by = models.ManyToManyField(UserProfile, blank=True, related_name="likes")
     bookmarked_by = models.ManyToManyField(UserProfile, blank=True, related_name="bookmarks")
 
     license = models.ForeignKey(EmojiLicense, on_delete=models.RESTRICT)
@@ -74,8 +74,8 @@ class Emoji(models.Model):
         return Image.open(self.image.url).is_animated
 
     @property
-    def favorites_count(self) -> int:
-        return self.favored_by.all().count()
+    def total_likes(self) -> int:
+        return self.liked_by.all().count()
 
     @property
     def bookmark_count(self) -> int:
