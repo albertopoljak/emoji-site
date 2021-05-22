@@ -1,8 +1,8 @@
 import json
 
 from django.http import HttpResponse
-from django.views.decorators.http import require_POST
 from django.shortcuts import render, get_object_or_404
+from django.views.decorators.http import require_http_methods
 
 from .models import Emoji
 
@@ -16,23 +16,26 @@ def index(request):
     return render(request, 'emoji_app/index.html', context)
 
 
+@require_http_methods(["GET", "POST"])
 def emoji_detail(request, emoji_id: int):
+    if request.method == 'GET':
+        emoji = get_object_or_404(Emoji, pk=emoji_id)
+        context = {"emoji": emoji}
+        return render(request, "emoji_app/detail.html", context)
+    elif request.method == 'POST':
+        return _like_emoji(request, emoji_id)
+
+
+def _like_emoji(request, emoji_id: int):
     emoji = get_object_or_404(Emoji, pk=emoji_id)
-    context = {"emoji": emoji}
-    return render(request, "emoji_app/detail.html", context)
+    user_profile = request.user.profile
 
-
-@require_POST
-def like(request, emoji_id: int):
-    emoji = get_object_or_404(Emoji, pk=emoji_id)
-    user = request.user
-
-    if emoji.liked_by.filter(user=user).exists():
-        emoji.liked_by.remove(user)
-        message = "Successfully unliked."
+    if emoji.liked_by.filter(id=user_profile.id).exists():
+        emoji.liked_by.remove(user_profile)
+        message = "Removed like"
     else:
-        emoji.liked_by.add(user)
-        message = "Successfully liked."
+        emoji.liked_by.add(user_profile)
+        message = "Added like."
 
     context = {"likes_count": emoji.total_likes, "message": message}
     return HttpResponse(json.dumps(context), content_type="application/json")

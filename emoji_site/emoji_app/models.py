@@ -5,7 +5,7 @@ from django.core.validators import MinValueValidator
 
 
 class UserProfile(models.Model):
-    user: User = models.OneToOneField(User, on_delete=models.CASCADE)
+    user: User = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
 
     def __str__(self):
         return self.user.username
