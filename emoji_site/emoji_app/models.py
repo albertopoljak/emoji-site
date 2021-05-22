@@ -34,19 +34,21 @@ class Category(models.Model):
         verbose_name_plural = "Categories"
 
 
-class Subcategory(models.Model):
-    category = models.ForeignKey(Category, on_delete=models.RESTRICT, related_name="subcategories")
-    name = models.CharField(
-        primary_key=True,
-        max_length=64,
-        help_text="More specific, but still broad, version of category. Example anime show."
-    )
+class Tag(models.Model):
+    name = models.SlugField(primary_key=True, max_length=16)
+    category = models.ManyToManyField(Category, related_name="tags")
 
     def __str__(self):
         return self.name
 
-    class Meta:
-        verbose_name_plural = "Subcategories"
+
+class Source(models.Model):
+    name = models.CharField(primary_key=True, max_length=32)
+    link = models.URLField(help_text="Link to copyright source.")
+    credits = models.TextField(max_length=512, default="", blank=True, help_text="Any additional credits.")
+
+    def __str__(self):
+        return self.name
 
 
 class Emoji(models.Model):
@@ -57,11 +59,9 @@ class Emoji(models.Model):
     bookmarked_by = models.ManyToManyField(UserProfile, blank=True, related_name="bookmarks")
 
     license = models.ForeignKey(EmojiLicense, on_delete=models.RESTRICT)
-    source = models.URLField(default="", blank=True)
-    credits = models.CharField(max_length=64, default="", blank=True)
+    source = models.ForeignKey(Source, default=None, blank=True, null=True, on_delete=models.SET_NULL)
 
-    category = models.ForeignKey(Category, on_delete=models.RESTRICT, related_name="emojis")
-    sub_category = models.ForeignKey(Subcategory, on_delete=models.RESTRICT, related_name="emojis")
+    tags = models.ManyToManyField(Tag, blank=True)
 
     downloads = models.IntegerField(default=0, validators=[MinValueValidator(0)])
     image = models.ImageField(upload_to="images/")
