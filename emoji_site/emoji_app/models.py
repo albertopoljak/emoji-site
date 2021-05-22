@@ -81,6 +81,9 @@ class Emoji(models.Model):
     def bookmark_count(self) -> int:
         return self.bookmarked_by.all().count()
 
+    class Meta:
+        ordering = ('date_uploaded', )
+
 
 class RecommendedName(models.Model):
     emoji = models.ForeignKey(Emoji, related_name="names", on_delete=models.CASCADE)
