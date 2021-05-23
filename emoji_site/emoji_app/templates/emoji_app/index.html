@@ -1,14 +1,24 @@
 {% extends "base.html" %}
+{% load static %}
 {% block content %}
 
     {% if all_emoji %}
-        <ul>
         {% for emoji in all_emoji %}
-            <li>
-                <a href ="{% url 'emoji_app:detail' emoji.id %}">{{ emoji.image.url }}</a>
-            </li>
+            {% if forloop.counter0|divisibleby:"4" and not forloop.first %}
+                </div>
+            {% endif %}
+
+            {% if forloop.counter0|divisibleby:"4" %}
+                <div class="card-deck">
+            {% endif %}
+
+            {% include "emoji_app/emoji_card.html" with emoji=emoji only %}
+
+            {% if forloop.last %}
+                </div>
+            {% endif %}
         {% endfor %}
-        </ul>
+
     {% else %}
         <p>No emojis available.</p>
     {% endif %}

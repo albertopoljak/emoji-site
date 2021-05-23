@@ -64,7 +64,7 @@ class Emoji(models.Model):
     tags = models.ManyToManyField(Tag, blank=True)
 
     downloads = models.IntegerField(default=0, validators=[MinValueValidator(0)])
-    image = models.ImageField(upload_to="images/")
+    image = models.ImageField(upload_to="static/")
 
     def __str__(self):
         return self.image.name
