@@ -171,6 +171,15 @@ API Key etc
 
 Integrate Discord or gmail oauth
 
+# CDN
+
+Integrate some CDN to serve images, django is only for fetching URLs.
+
+We absolutely need NO loss in quality.
+
+# DNS / DDos protection
+
+Fascade behind cloudflare or some other provider.
 
 
 For category hierarchy we would simply go from current category to all of the parent categories and construct a tree.
@@ -191,3 +200,25 @@ Question: How many nesting can there be? What if we have case like:
 
 main -> main -> secondary -> main
              -> secondary
+
+
+
+# DESCRIBE IMAGES
+
+character: koishi
+expression: happy
+state: bald, big, tall, fit, beautiful
+action: jump
+object: knife
+place: mental assylum
+
+Pretty sure the above would work on vast majority of images, including reaction images.
+Some words like cute are not an expression, but a "positive descriptive adjective" with "positive" being just the name,
+it can also be "ugly". So for those I'm not sure what to call them except that "official" term, but
+that is a slippery sloper as I could then use an "official" word for everything and make it more complex.
+Maybe "state" would be better, all of PDA like big, tall, fit, beautiful, cute could go in it?
+Some word that are missing: bald, could also be a state?
+
+
+# SPACY auto pipenv install file and add to pipenv
+pipenv install $(spacy info en_core_web_trf --url)
